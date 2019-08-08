@@ -1,4 +1,5 @@
 const Word = require("./Word.js");
+const colors = require('colors');
 const inquirer = require("inquirer");
 
 const wordBank = {
@@ -60,14 +61,14 @@ function guessLetter() {
       let userGuess = response.letter;
 
       if (!validLetters.includes(userGuess)) {
-        console.log(`\nError :( Enter a letter!\n`);
+        console.log(`\nError :( Enter a letter!\n`.magenta);
         console.log(`${selectedWordObj.displayString()}\n`);
 
         guessLetter();
 
       } else if (alreadyGuessed.includes(userGuess)) {
         guessCount--;
-        console.log(`\nYou already guessed "${userGuess}"!\n`);
+        console.log(`\nYou already guessed "${userGuess}"!\n`.magenta);
         console.log(`${selectedWordObj.displayString()}\n`);
         console.log(`${guessCount} guesses remaining!\n`);
 
@@ -75,7 +76,7 @@ function guessLetter() {
 
       } else if (!selectedWordArr.includes(userGuess)) {
         guessCount--;
-        console.log(`\nWRONG!\n`);
+        console.log(`\nWRONG!\n`.red);
         console.log(`${selectedWordObj.displayString()}\n`);
         console.log(`${guessCount} guesses remaining!\n`);
 
@@ -84,7 +85,7 @@ function guessLetter() {
 
       } else {
         selectedWordObj.getResult(userGuess);
-        console.log(`\nCORRECT!\n`)
+        console.log(`\nCORRECT!\n`.green);
         console.log(`${selectedWordObj.displayString()}\n`);
 
         alreadyGuessed.push(userGuess);
@@ -96,7 +97,7 @@ function guessLetter() {
           guessLetter();
         } else {
           //if user guessed all correctly
-          console.log(`Congrats! You gueesed correctly :)\n`);
+          console.log(`Congrats! You gueesed correctly :)\n`.rainbow);
         }
       }
 

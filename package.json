@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/yukanishijima/constructor-word-guess#readme",
   "dependencies": {
+    "colors": "^1.3.3",
     "inquirer": "^6.5.0"
   }
 }
