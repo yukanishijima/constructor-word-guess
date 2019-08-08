@@ -1,24 +1,49 @@
 const Word = require("./Word.js");
 const inquirer = require("inquirer");
 
-const options = ["apple", "orange", "banana"];
+const validLetters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+const cheese = ["Camembert", "Brie", "Gouda", "Cheddar", "Mozzarella", "Gorgonzola", "Emmental", "Bocconcini", "Halloumi", "Ricotta"];
+const wine = ["Chardonnay", "Gewurztraminer", "Merlot", "Malbec", "Sauvignon Blanc", "Pinot Noir", "Riesling", "Shiraz", "Tempranillo"];
 let selectedWordObj = "";
 let selectedWordArr = [];
 let alreadyGuessed = [];
+let guessCount = 15;
 
-function selectWord() {
+//randomly select a word from the array
+function selectWord(options) {
   let randomNum = Math.floor(Math.random() * options.length);
-  let option = options[randomNum];  //randomly select a word from the array
+  let option = options[randomNum];
   selectedWordObj = new Word(option);
-  selectedWordArr = option.split("");
-  console.log(selectedWordObj);
-  console.log(selectedWordArr);
+  selectedWordArr = option.toLowerCase().split("");
+  // console.log(selectedWordObj);
+  // console.log(selectedWordArr);
 }
-selectWord();
+
+//ask user which category they want to play with
+function selectCategory() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        message: "Select a category to begin!",
+        choices: ["Wine", "Cheese"],
+        name: "category"
+      }
+    ])
+    .then(function (response) {
+      let userCate = response.category.toLowerCase();
+      if (userCate === "wine") {
+        selectWord(wine);
+      } else if (userCate === "cheese") {
+        selectWord(cheese);
+      }
+      guessLetter();
+    });
+};
+selectCategory();
 
 //ask a question to user
 function guessLetter() {
-
   inquirer
     .prompt([
       {
@@ -30,17 +55,25 @@ function guessLetter() {
     .then(function (response) {
       let userGuess = response.letter;
 
-      if (alreadyGuessed.includes(userGuess)) {
+      if (!validLetters.includes(userGuess)) {
+        console.log(`\nError :( Enter a letter!\n`);
+        console.log(`${selectedWordObj.displayString()}\n`);
+
+        guessLetter();
+
+      } else if (alreadyGuessed.includes(userGuess)) {
+        guessCount--;
         console.log(`\nYou already guessed "${userGuess}"!\n`);
-        selectedWordObj.displayString();
-        console.log(`\n`);
+        console.log(`${selectedWordObj.displayString()}\n`);
+        console.log(`${guessCount} guesses remaining!\n`);
 
         guessLetter();
 
       } else if (!selectedWordArr.includes(userGuess)) {
-        console.log(`\nWRONG!\n`)
-        selectedWordObj.displayString();
-        console.log(`\n`);
+        guessCount--;
+        console.log(`\nWRONG!\n`);
+        console.log(`${selectedWordObj.displayString()}\n`);
+        console.log(`${guessCount} guesses remaining!\n`);
 
         alreadyGuessed.push(userGuess);
         guessLetter();
@@ -48,16 +81,20 @@ function guessLetter() {
       } else {
         selectedWordObj.getResult(userGuess);
         console.log(`\nCORRECT!\n`)
-        selectedWordObj.displayString();
-        console.log(`\n`);
+        console.log(`${selectedWordObj.displayString()}\n`);
 
         alreadyGuessed.push(userGuess);
 
-        //if statement here to determine whether user guessed all letters or not
+        let resultArr = selectedWordObj.displayString().split(" ");
 
-        guessLetter();
+        //if there's still "_" that has to be guessed
+        if (resultArr.includes("_")) {
+          guessLetter();
+        } else {
+          //if user guessed all correctly
+          console.log(`Congrats! You gueesed correctly :)\n`);
+        }
       }
 
     });
 }
-guessLetter();

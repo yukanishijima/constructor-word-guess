@@ -18,7 +18,7 @@ Word.prototype.displayString = function () {
     let value = this.lettersArr[i].generteUnderscore();
     resultArr.push(value);
   }
-  console.log(resultArr.join(" "));
+  // console.log(resultArr.join(" "));
   return resultArr.join(" ");
 };
 

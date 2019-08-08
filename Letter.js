@@ -4,7 +4,9 @@ function Letter(letter) {
 }
 
 Letter.prototype.generteUnderscore = function () {
-  if (this.isGuessed === false) {
+  if (this.letter === " ") {
+    return " ";
+  } else if (this.isGuessed === false) {
     return "_";
   } else {
     return this.letter;
@@ -12,7 +14,7 @@ Letter.prototype.generteUnderscore = function () {
 };
 
 Letter.prototype.checkGuess = function (char) {
-  if (char === this.letter) {
+  if (char === this.letter.toLowerCase()) {
     this.isGuessed = true;
   }
   // console.log(this.isGuessed);
