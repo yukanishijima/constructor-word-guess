@@ -1,9 +1,12 @@
 const Word = require("./Word.js");
 const inquirer = require("inquirer");
 
+const wordBank = {
+  wine: ["Chardonnay", "Gewurztraminer", "Merlot", "Malbec", "Sauvignon Blanc", "Pinot Noir", "Riesling", "Shiraz", "Tempranillo"],
+  cheese: ["Camembert", "Brie", "Gouda", "Cheddar", "Mozzarella", "Gorgonzola", "Emmental", "Bocconcini", "Halloumi", "Ricotta"]
+}
+
 const validLetters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-const cheese = ["Camembert", "Brie", "Gouda", "Cheddar", "Mozzarella", "Gorgonzola", "Emmental", "Bocconcini", "Halloumi", "Ricotta"];
-const wine = ["Chardonnay", "Gewurztraminer", "Merlot", "Malbec", "Sauvignon Blanc", "Pinot Noir", "Riesling", "Shiraz", "Tempranillo"];
 let selectedWordObj = "";
 let selectedWordArr = [];
 let alreadyGuessed = [];
@@ -26,17 +29,18 @@ function selectCategory() {
       {
         type: "list",
         message: "Select a category to begin!",
-        choices: ["Wine", "Cheese"],
+        choices: Object.keys(wordBank),
         name: "category"
       }
     ])
     .then(function (response) {
       let userCate = response.category.toLowerCase();
       if (userCate === "wine") {
-        selectWord(wine);
+        selectWord(wordBank.wine);
       } else if (userCate === "cheese") {
-        selectWord(cheese);
+        selectWord(wordBank.cheese);
       }
+      console.log(`\n${selectedWordObj.displayString()}\n`);
       guessLetter();
     });
 };
