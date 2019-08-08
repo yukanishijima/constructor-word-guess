@@ -12,6 +12,7 @@ let selectedWordObj = "";
 let selectedWordArr = [];
 let alreadyGuessed = [];
 let guessCount = 15;
+let userCate = "";
 
 //randomly select a word from the array
 function selectWord(options) {
@@ -23,8 +24,20 @@ function selectWord(options) {
   // console.log(selectedWordArr);
 }
 
-//ask user which category they want to play with
 function selectCategory() {
+  if (userCate === "wine") {
+    selectWord(wordBank.wine);
+  } else if (userCate === "cheese") {
+    selectWord(wordBank.cheese);
+  }
+  console.log(`\n${selectedWordObj.displayString()}\n`);
+  alreadyGuessed = [];
+  guessCount = 15;
+  guessLetter();
+};
+
+//ask user which category they want to play with
+function askCategory() {
   inquirer
     .prompt([
       {
@@ -35,17 +48,20 @@ function selectCategory() {
       }
     ])
     .then(function (response) {
-      let userCate = response.category.toLowerCase();
-      if (userCate === "wine") {
-        selectWord(wordBank.wine);
-      } else if (userCate === "cheese") {
-        selectWord(wordBank.cheese);
-      }
-      console.log(`\n${selectedWordObj.displayString()}\n`);
-      guessLetter();
+      userCate = response.category.toLowerCase();
+      selectCategory();
     });
 };
-selectCategory();
+askCategory();
+
+function checkGuessCount() {
+  if (guessCount === 0) {
+    console.log(`\nGame over! Try a new one!\n`.red);
+    selectCategory();
+  } else if (guessCount > 0) {
+    guessLetter();
+  }
+};
 
 //ask a question to user
 function guessLetter() {
@@ -61,18 +77,18 @@ function guessLetter() {
       let userGuess = response.letter;
 
       if (!validLetters.includes(userGuess)) {
-        console.log(`\nError :( Enter a letter!\n`.magenta);
+        console.log(`\nHey, enter a single letter only!\n`.yellow);
         console.log(`${selectedWordObj.displayString()}\n`);
 
         guessLetter();
 
       } else if (alreadyGuessed.includes(userGuess)) {
         guessCount--;
-        console.log(`\nYou already guessed "${userGuess}"!\n`.magenta);
+        console.log(`\nYou already guessed "${userGuess}"!\n`.yellow);
         console.log(`${selectedWordObj.displayString()}\n`);
         console.log(`${guessCount} guesses remaining!\n`);
 
-        guessLetter();
+        checkGuessCount();
 
       } else if (!selectedWordArr.includes(userGuess)) {
         guessCount--;
@@ -81,7 +97,7 @@ function guessLetter() {
         console.log(`${guessCount} guesses remaining!\n`);
 
         alreadyGuessed.push(userGuess);
-        guessLetter();
+        checkGuessCount();
 
       } else {
         selectedWordObj.getResult(userGuess);
